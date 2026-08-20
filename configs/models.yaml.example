@@ -1,0 +1,34 @@
+# LLM模型配置
+
+providers:
+  # 便宜模型 - 用于假设生成（Stage 1）
+  deepseek_cheap:
+    provider: deepseek
+    model: deepseek-chat
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1
+    use_for: hypothesis_generation
+    cost_per_1k_tokens: 0.001
+
+  # 强模型 - 用于PoC构造（Stage 2）
+  openai_strong:
+    provider: openai
+    model: gpt-4o
+    api_key_env: OPENAI_API_KEY
+    base_url: https://api.openai.com/v1
+    use_for: poc_construction
+    cost_per_1k_tokens: 0.005
+
+  claude_strong:
+    provider: anthropic
+    model: claude-3-5-sonnet-20241022
+    api_key_env: ANTHROPIC_API_KEY
+    use_for: poc_construction
+    cost_per_1k_tokens: 0.003
+
+# 默认配置
+default:
+  hypothesis_model: deepseek_cheap
+  poc_model: openai_strong
+  max_tokens: 4096
+  temperature: 0.1

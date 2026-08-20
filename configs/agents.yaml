@@ -1,0 +1,21 @@
+# Agent配置
+
+manager:
+  max_solvers: 3  # 最大并发Solver数量
+  budget_tokens: 200000  # 每任务token预算
+  timeout_seconds: 600  # 任务超时时间
+  allocation_strategy: priority  # 分配策略: priority | round_robin
+
+observer:
+  check_interval_seconds: 30  # 检查间隔
+  context_window: 10  # 只保留最近N轮上下文
+  duplicate_threshold: 0.85  # 重复假设相似度阈值
+  drift_detection: true  # 是否启用目标漂移检测
+  auto_compress: true  # 是否自动压缩上下文
+
+solver:
+  max_iterations: 5  # 每个Idea最多尝试次数
+  poc_timeout_seconds: 60  # PoC执行超时
+  model: openai_strong  # 使用的模型
+  retry_on_failure: true  # 失败后是否重试
+  save_intermediate: true  # 是否保存中间结果
