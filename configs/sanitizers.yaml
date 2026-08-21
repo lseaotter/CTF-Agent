@@ -1,0 +1,42 @@
+# Sanitizer配置
+
+asan:
+  enabled: true
+  options:
+    - detect_leaks=0
+    - abort_on_error=1
+    - symbolize=1
+    - print_stats=1
+
+ubsan:
+  enabled: true
+  options:
+    - print_stacktrace=1
+    - halt_on_error=1
+
+msan:
+  enabled: false  # MSan需要特殊编译，默认禁用
+  options:
+    - print_stats=1
+
+# 执行配置
+execution:
+  timeout_seconds: 60
+  memory_limit_mb: 512
+  cpu_limit: 1
+
+# 验证标准
+verification:
+  pre_patch_must_crash: true
+  post_patch_must_not_crash: true
+  require_sanitizer_report: true
+
+  # 接受的崩溃类型
+  accepted_crash_types:
+    - heap-buffer-overflow
+    - stack-buffer-overflow
+    - use-after-free
+    - double-free
+    - heap-use-after-free
+    - global-buffer-overflow
+    - segmentation-fault

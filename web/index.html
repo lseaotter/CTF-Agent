@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>CyberGem Research Console</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <a class="brand" href="#overview" data-view="overview" aria-label="CyberGem 首页">
+                <span class="brand-mark" aria-hidden="true">CG</span>
+                <span>
+                    <strong>CyberGem</strong>
+                    <small>Research Console</small>
+                </span>
+            </a>
+            <div class="topbar-meta">
+                <span class="environment-tag">LOCAL / OPENHARMONY</span>
+                <span class="connection-state" id="connection-state">连接中</span>
+                <button class="icon-button" type="button" data-action="refresh" title="刷新数据" aria-label="刷新数据">↻</button>
+            </div>
+        </header>
+
+        <div class="workspace">
+            <aside class="sidebar" aria-label="主导航">
+                <nav class="nav-list">
+                    <button class="nav-item active" type="button" data-view="overview">
+                        <span class="nav-index">01</span><span>运行总览</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="findings">
+                        <span class="nav-index">02</span><span>漏洞发现</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="activity">
+                        <span class="nav-index">03</span><span>分析记录</span>
+                    </button>
+                    <button class="nav-item" type="button" data-view="diagnostics">
+                        <span class="nav-index">04</span><span>连接诊断</span>
+                    </button>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="score-key">
+                        <div><span>L1</span><strong>5</strong></div>
+                        <div><span>L2</span><strong>4</strong></div>
+                        <div><span>L3</span><strong>1</strong></div>
+                    </div>
+                    <p>本地回归评分</p>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="page-heading">
+                    <div>
+                        <p class="eyebrow" id="view-eyebrow">LOCAL / OVERVIEW</p>
+                        <h1 id="view-title">运行总览</h1>
+                    </div>
+                    <div class="run-context">
+                        <span>当前结果</span>
+                        <strong id="current-run-label">未选择</strong>
+                    </div>
+                </div>
+
+                <section class="view active" id="view-overview" data-view-panel="overview">
+                    <div class="metric-grid">
+                        <div class="metric metric-teal">
+                            <span>结果运行</span>
+                            <strong id="metric-runs">0</strong>
+                            <small>JSON artifacts</small>
+                        </div>
+                        <div class="metric metric-blue">
+                            <span>当前发现</span>
+                            <strong id="metric-findings">0</strong>
+                            <small>grouped findings</small>
+                        </div>
+                        <div class="metric metric-amber">
+                            <span>本地评分</span>
+                            <strong id="metric-score">--</strong>
+                            <small id="metric-score-detail">选择结果后计算</small>
+                        </div>
+                        <div class="metric metric-slate">
+                            <span>扫描状态</span>
+                            <strong id="metric-scan">idle</strong>
+                            <small id="metric-scan-detail">本地进程</small>
+                        </div>
+                    </div>
+
+                    <section class="panel scan-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <p class="eyebrow">LOCAL SCAN</p>
+                                <h2>启动一次本地分析</h2>
+                            </div>
+                            <span class="panel-status" id="scan-status-label">IDLE</span>
+                        </div>
+                        <div class="scan-controls">
+                            <label>
+                                <span>模块</span>
+                                <select id="scan-module">
+                                    <option value="medical_sensor">medical_sensor</option>
+                                    <option value="sensors">sensors</option>
+                                    <option value="communication">communication</option>
+                                    <option value="arkui">arkui</option>
+                                </select>
+                            </label>
+                            <div class="button-row">
+                                <button class="button button-primary" type="button" data-action="start-scan">启动扫描</button>
+                                <button class="button button-quiet" type="button" data-action="stop-scan">停止</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div>
+                                <p class="eyebrow">RESULT ARTIFACTS</p>
+                                <h2>最近运行</h2>
+                            </div>
+                            <button class="button button-quiet" type="button" data-action="refresh">刷新</button>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="run-table">
+                                <thead><tr><th>模块</th><th>运行</th><th>发现</th><th>状态</th><th>更新时间</th><th></th></tr></thead>
+                                <tbody id="run-table"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </section>
+
+                <section class="view" id="view-findings" data-view-panel="findings">
+                    <section class="panel filter-panel">
+                        <div class="filter-grid">
+                            <label>
+                                <span>结果运行</span>
+                                <select id="run-select"></select>
+                            </label>
+                            <label>
+                                <span>搜索</span>
+                                <input id="finding-search" type="search" placeholder="路径、Commit、CWE 或说明" autocomplete="off">
+                            </label>
+                            <label>
+                                <span>状态</span>
+                                <select id="finding-state">
+                                    <option value="">全部</option>
+                                    <option value="verified">已验证</option>
+                                    <option value="needs-review">待复核</option>
+                                </select>
+                            </label>
+                            <button class="button button-primary filter-button" type="button" data-action="apply-filter">筛选</button>
+                        </div>
+                    </section>
+                    <div class="findings-layout">
+                        <section class="panel finding-list-panel">
+                            <div class="panel-heading compact-heading">
+                                <div><p class="eyebrow">CANDIDATES</p><h2 id="finding-count-label">发现</h2></div>
+                                <button class="button button-quiet" type="button" data-action="export-json">导出 JSON</button>
+                            </div>
+                            <div class="table-wrap">
+                                <table class="finding-table">
+                                    <thead><tr><th>位置</th><th>L2</th><th>L3</th><th>状态</th><th>置信度</th></tr></thead>
+                                    <tbody id="finding-table"></tbody>
+                                </table>
+                            </div>
+                            <div class="empty-state" id="finding-empty" hidden>当前结果没有可显示的发现。</div>
+                        </section>
+                        <aside class="panel detail-panel" id="finding-detail" aria-live="polite">
+                            <div class="empty-state">选择一条发现查看证据。</div>
+                        </aside>
+                    </div>
+                </section>
+
+                <section class="view" id="view-activity" data-view-panel="activity">
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div><p class="eyebrow">RUN HISTORY</p><h2>分析记录</h2></div>
+                            <span class="muted" id="activity-count">0 条</span>
+                        </div>
+                        <div class="activity-list" id="activity-list"></div>
+                    </section>
+                    <section class="panel log-panel">
+                        <div class="panel-heading compact-heading"><div><p class="eyebrow">PROCESS LOG</p><h2>本地进程</h2></div></div>
+                        <pre class="console" id="scan-console">暂无扫描记录。</pre>
+                    </section>
+                </section>
+
+                <section class="view" id="view-diagnostics" data-view-panel="diagnostics">
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <div><p class="eyebrow">PROVIDER DIAGNOSTICS</p><h2>模型连接</h2></div>
+                            <span class="muted">只读探测</span>
+                        </div>
+                        <div class="provider-list" id="provider-list"></div>
+                    </section>
+                </section>
+            </main>
+        </div>
+
+        <footer class="statusbar">
+            <span id="footer-status">正在连接本地服务</span>
+            <span id="footer-time">--</span>
+        </footer>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/assets/app.js" defer></script>
+</body>
+</html>
